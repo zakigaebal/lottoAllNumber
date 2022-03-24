@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -37,7 +38,10 @@ namespace WindowsFormsApp7
 			//(45*44*43*42*41*40)/(6*5*4*3*2*1)계산식이 45C6임
 			//for문으로 123456을 가져옴 1 돌리고 2돌리고 3돌려서 마지막 40,41,42,43,44,45만 가지고 오면
 			// 갯수 8145060을 가져옴
+			Stopwatch stopwatch = new Stopwatch(); //객체 선언
+			stopwatch.Start(); // 시간측정 시작
 			for (a = 1; a <= 40; ++a)
+			
 			{
 				for (b = a + 1; b <= 41; ++b)
 				{
@@ -49,8 +53,9 @@ namespace WindowsFormsApp7
 							{
 								for (g = f + 1; g <= 45; ++g)
 								{
-								string lotto = a.ToString() + b.ToString() + c.ToString() + d.ToString() + f.ToString() + g.ToString();
-								Console.WriteLine(lotto);
+									string lotto = string.Format("{0:#,00}", a) + string.Format("{0:#,00}", b) + string.Format("{0:#,00}", c) + string.Format("{0:#,00}", d)
+											+ string.Format("{0:#,00}", f) + string.Format("{0:#,00}", g);
+								//Console.WriteLine(lotto);
 								i++;
 							
 								}
@@ -58,10 +63,19 @@ namespace WindowsFormsApp7
 						}
 					}
 				} }
+			stopwatch.Stop(); //시간측정 끝
+			System.Console.WriteLine("time : " +
+			stopwatch.ElapsedMilliseconds + "ms");
 
 			//8145060
 			Console.WriteLine(i);
-
+			///
+			///텍스트파일 바이너리 두번 저장
+			///텍스트로 1000을 숫자입력
+			///1000번째 있는 숫자를 제거하기
+			///다시 저장하기
+			///텍스트박스를 하나 생성해서 문자열을 입력하는데 로또번호 10 15 20 35 38 40 입력받아서 찾아서 지우기하고 파일 새로운이름으로 저장
+			///
 		}
 			}
 		}
