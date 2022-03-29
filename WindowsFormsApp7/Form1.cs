@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,16 +57,28 @@ namespace WindowsFormsApp7
 									string lotto = string.Format("{0:#,00}", a) + string.Format("{0:#,00}", b) + string.Format("{0:#,00}", c) + string.Format("{0:#,00}", d)
 											+ string.Format("{0:#,00}", f) + string.Format("{0:#,00}", g);
 								//Console.WriteLine(lotto);
-								i++;
+
+									//텍스트파일저장하기
+								  fileText(lotto);
+
+									//바이너리파일저장하기
+									binaryAppendData("lot.bin", lotto + "\n");
+
+											i++;
 							
 								}
 							}
 						}
 					}
-				} }
+				}
+
+			}
 			stopwatch.Stop(); //시간측정 끝
 			System.Console.WriteLine("time : " +
 			stopwatch.ElapsedMilliseconds + "ms");
+
+
+			MessageBox.Show("시간측정 : " + stopwatch.ElapsedMilliseconds + "ms");
 
 			//8145060
 			Console.WriteLine(i);
@@ -77,5 +90,38 @@ namespace WindowsFormsApp7
 			///텍스트박스를 하나 생성해서 문자열을 입력하는데 로또번호 10 15 20 35 38 40 입력받아서 찾아서 지우기하고 파일 새로운이름으로 저장
 			///
 		}
+
+		private void button2_Click(object sender, EventArgs e)
+		{
+			//텍스트파일저장
+
+		}
+
+		void fileText(string lottoString)
+		{
+			// 텍스트파일저장하기
+			// 파일 경로를 지정 합니다.
+			string savePath = @"c:\test.txt";
+			// 입력 할 text 값
+			string textValue = lottoString + "\n";
+			// 기존 파일에 text 값을 추가 합니다.
+			System.IO.File.AppendAllText(savePath, textValue, Encoding.Default);
+		}
+
+		private static void binaryAppendData(string filename,  string stringData)
+		{
+			using (var fileStream = new FileStream(filename, FileMode.Append, FileAccess.Write, FileShare.None))
+			using (var bw = new BinaryWriter(fileStream))
+			{
+				bw.Write(stringData);
 			}
+		}
+
+		private void button3_Click(object sender, EventArgs e)
+		{
+			//BinaryWriter bw = new BinaryWriter(new FileStream("a.dat", FileMode.Create));
+			//bw.Write(lotto);
+			//bw.Close();
+		}
+	}
 		}
