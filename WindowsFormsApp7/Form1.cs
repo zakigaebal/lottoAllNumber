@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,22 +15,27 @@ namespace WindowsFormsApp7
 {
 	public partial class Form1 : Form
 	{
+		//랜덤함수 정의
+		Random random = new Random();
+
+
+
 		public Form1()
 		{
 			InitializeComponent();
 		}
 
-		private void button1_Click(object sender, EventArgs e)
+		void lottoAll()
 		{
 			//0번째부터
 			int i = 0;
 			// 넣을 초기값
-			int a =1;
-			int b =1;
-			int c =1;
-			int d =1;
-			int f =1;
-			int g =1;
+			int a = 1;
+			int b = 1;
+			int c = 1;
+			int d = 1;
+			int f = 1;
+			int g = 1;
 			// 6자리 배열 생성
 			int[] array1 = { a, b, c, d, f, g };
 
@@ -41,37 +47,46 @@ namespace WindowsFormsApp7
 			// 갯수 8145060을 가져옴
 			Stopwatch stopwatch = new Stopwatch(); //객체 선언
 			stopwatch.Start(); // 시간측정 시작
-			for (a = 1; a <= 40; ++a)
-			
+			for (array1[0] = 1; array1[0] <= 40; ++array1[0])
 			{
-				for (b = a + 1; b <= 41; ++b)
+				for (array1[1] = array1[0] + 1; array1[1] <= 41; ++array1[1])
 				{
-					for (c = b + 1; c <= 42; ++c)
+					for (array1[2] = array1[1] + 1; array1[2] <= 42; ++array1[2])
 					{
-						for (d = c + 1; d <= 43; ++d)
+						for (array1[3] = array1[2] + 1; array1[3] <= 43; ++array1[3])
 						{
-							for (f = d + 1; f <= 44; ++f)
+							for (array1[4] = array1[3] + 1; array1[4] <= 44; ++array1[4])
 							{
-								for (g = f + 1; g <= 45; ++g)
+								for (array1[5] = array1[4] + 1; array1[5] <= 45; ++array1[5])
 								{
-									string lotto = string.Format("{0:#,00}", a) + string.Format("{0:#,00}", b) + string.Format("{0:#,00}", c) + string.Format("{0:#,00}", d)
-											+ string.Format("{0:#,00}", f) + string.Format("{0:#,00}", g);
-								//Console.WriteLine(lotto);
+									string lotto = string.Format("{0:#,00}", array1[0]) + string.Format("{0:#,00}", array1[1]) + string.Format("{0:#,00}", array1[2]) + string.Format("{0:#,00}", array1[3])
+											+ string.Format("{0:#,00}", array1[4]) + string.Format("{0:#,00}", array1[5]);
+
+							
+
+
+									List<LottoSerialize> ls = new List<LottoSerialize>();
+									LottoSerialize lottoSerialize = new LottoSerialize() { lottoNumber = lotto };
+									ls.Add(lottoSerialize);
 
 									//텍스트파일저장하기
-								  fileText(lotto);
+									fileText(lotto + "\n");
 
-									//바이너리파일저장하기
+								//바이너리파일저장하기
 									binaryAppendData("lot.bin", lotto + "\n");
 
-											i++;
-							
+
+									Console.WriteLine(lotto);
+									i++;
+								
+
 								}
+								
+
 							}
 						}
 					}
 				}
-
 			}
 			stopwatch.Stop(); //시간측정 끝
 			System.Console.WriteLine("time : " +
@@ -79,9 +94,19 @@ namespace WindowsFormsApp7
 
 
 			MessageBox.Show("시간측정 : " + stopwatch.ElapsedMilliseconds + "ms");
-
 			//8145060
 			Console.WriteLine(i);
+
+		
+
+		}
+
+
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+
+			lottoAll();
 			///
 			///텍스트파일 바이너리 두번 저장
 			///텍스트로 1000을 숫자입력
@@ -93,8 +118,14 @@ namespace WindowsFormsApp7
 
 		private void button2_Click(object sender, EventArgs e)
 		{
-			//텍스트파일저장
 
+			//텍스트파일저장
+			//fileText(ls[2].ToString());
+		}
+
+		class LottoSerialize
+		{
+			public string lottoNumber;
 		}
 
 		void fileText(string lottoString)
@@ -115,6 +146,27 @@ namespace WindowsFormsApp7
 			{
 				bw.Write(stringData);
 			}
+		}
+
+		void serialBinary(string lottoString)
+		{
+
+			Stream ws = new FileStream("a.dat", FileMode.Create);
+			BinaryFormatter serializer = new BinaryFormatter();
+
+			LottoSerialize ls = new LottoSerialize();
+			ls.lottoNumber = lottoString;
+
+			serializer.Serialize(ws, ls);
+			ws.Close();
+
+			Stream rs = new FileStream("a.dat", FileMode.Open);
+			BinaryFormatter deserialize = new BinaryFormatter();
+
+			LottoSerialize ls2;
+			ls2 = (LottoSerialize)deserialize.Deserialize(rs);
+			rs.Close();
+			Console.WriteLine($"lotto : { ls2.lottoNumber }");
 		}
 
 		private void button3_Click(object sender, EventArgs e)
