@@ -49,7 +49,7 @@ namespace WindowsFormsApp7
 			// 갯수 8145060을 가져옴
 
 			//// 복합 형식 지정 Format 
-		var stopWatch = Stopwatch.StartNew();  //객체 선언
+			var stopWatch = Stopwatch.StartNew();  //객체 선언
 			stopWatch.Start(); // 시간측정 시작
 			for (a = 1; a <= 40; ++a)
 			{
@@ -100,7 +100,7 @@ namespace WindowsFormsApp7
 				}
 			}
 			stopWatch.Stop();
-			System.Console.WriteLine("time : " + stopWatch.ElapsedMilliseconds/1000d + "초");
+			System.Console.WriteLine("time : " + stopWatch.ElapsedMilliseconds / 1000d + "초");
 			//보간식이 빠른가
 			//string.fromat이 빠른가
 			//보간식이 더 빠르다
@@ -134,21 +134,19 @@ namespace WindowsFormsApp7
 
 			lottoFileAll();
 
-
 			stopwatch.Stop(); //시간측정 끝
 			System.Console.WriteLine("time : " + stopwatch.ElapsedMilliseconds / 1000d + "초");
 			label1.Text = stopwatch.ElapsedMilliseconds.ToString(); //레이블1에 보여주기
 
 
-			//using (StreamReader sr = new StreamReader(new FileStream("lotto.txt", FileMode.Open)))
-			//{
-			//	Console.WriteLine($"File size : {sr.BaseStream.Length} bytes");
-			//}
-			//using (BinaryReader br = new BinaryReader(new FileStream("lotto.dat", FileMode.Open)))
-			//{
-			//	Console.WriteLine($"File size : {br.BaseStream.Length} bytes");
-			//}
-
+			using (StreamReader sr = new StreamReader(new FileStream("lotto.txt", FileMode.Open)))
+			{
+				Console.WriteLine($"File size : {sr.BaseStream.Length} bytes");
+			}
+			using (BinaryReader br = new BinaryReader(new FileStream("lotto.dat", FileMode.Open)))
+			{
+				Console.WriteLine($"File size : {br.BaseStream.Length} bytes");
+			}
 		}
 
 		private void lottoBinaryAll()
@@ -168,24 +166,12 @@ namespace WindowsFormsApp7
 			public string lottoNumber;
 		}
 
-		void fileText(string lottoString)
-		{
-			// 텍스트파일저장하기
-			// 파일 경로를 지정 합니다.
-			string savePath = @"c:\test.txt";
-			// 입력 할 text 값
-			string textValue = lottoString + "\n";
-			// 기존 파일에 text 값을 추가 합니다.
-			System.IO.File.AppendAllText(savePath, textValue, Encoding.Default);
-
-			using (Stream outStream = new FileStream("a.txt", FileMode.Create)) ;
-		}
 
 		//using을 사용하면 자원의 수명을 세부적으로 조절을 할 수 있다.
 		//스트림라이터를 사용해서 쓰기
 		void fileText1(string lottoString)
 		{
-			using (StreamWriter sw = new StreamWriter(new FileStream("lotto.txt", FileMode.Append)))
+			using (StreamWriter sw = new StreamWriter(new FileStream("lotto.txt", FileMode.Create)))
 			{
 				sw.WriteLine(lottoString);
 			}
@@ -194,12 +180,12 @@ namespace WindowsFormsApp7
 		//바이너리라이터는 스트림에 이진 데이터를 기록하기 위한 목적으로 쓴다
 		void fileText2(string lottoString)
 		{
-			using (BinaryWriter bw = new BinaryWriter(new FileStream("lotto.dat", FileMode.Append)))
+			using (BinaryWriter bw = new BinaryWriter(new FileStream("lotto.dat", FileMode.Create)))
 			{
 				bw.Write(lottoString);
 			}
 		}
-		//시리얼라이
+
 
 		static void OnWrongPathType(string type)
 		{
@@ -394,6 +380,50 @@ namespace WindowsFormsApp7
 			//텍스트는 010102 아스키코드
 
 			//바이너리는 바이트타입으로
+		}
+
+		private void button6_Click(object sender, EventArgs e)
+		{
+			Stopwatch stopwatch = new Stopwatch(); //객체 선언
+			stopwatch.Start(); // 시간측정 시작
+
+			StreamWriter sw = new StreamWriter(new FileStream("lotto.txt", FileMode.Append));
+			int a;
+			int b;
+			int c;
+			int d;
+			int f;
+			int g;
+			for (a = 1; a <= 40; ++a)
+			{
+				for (b = a + 1; b <= 41; ++b)
+				{
+					for (c = b + 1; c <= 42; ++c)
+					{
+						for (d = c + 1; d <= 43; ++d)
+						{
+							for (f = d + 1; f <= 44; ++f)
+							{
+								for (g = f + 1; g <= 45; ++g)
+								{
+									string lotto = $"{a,0:#,00}{b,0:#,00}{c,0:#,00}{d,0:#,00}{f,0:#,00}{g,0:#,00}";
+									sw.WriteLine(lotto);
+								}
+							}
+						}
+					}
+				}
+			}
+			sw.Close();
+			stopwatch.Stop(); //시간측정 끝
+			System.Console.WriteLine("time : " + stopwatch.ElapsedMilliseconds / 1000d + "초");
+			label1.Text = stopwatch.ElapsedMilliseconds.ToString(); //레이블1에 보여주기
+
+			using (StreamReader sr = new StreamReader(new FileStream("lotto.txt", FileMode.Open)))
+			{
+				Console.WriteLine($"File size : {sr.BaseStream.Length} bytes");
+			}
+			//12초
 		}
 	}
 }
