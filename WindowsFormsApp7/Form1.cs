@@ -29,6 +29,9 @@ namespace WindowsFormsApp7
 		}
 		void lottoFileAll()
 		{
+			textBox3.Text = textBox3.Text + "\r\n String Format방식: \r\n 시작시간: " + DateTime.Now.ToString("yyyyy-MM-dd HH:mm:ss.fff");
+			StreamWriter sw = new StreamWriter(new FileStream("stringFormattLotto.txt", FileMode.Create));
+
 			//0번째부터
 			int i = 0;
 			// 넣을 초기값
@@ -66,16 +69,48 @@ namespace WindowsFormsApp7
 									string lotto = string.Format("{0:#,00}", a) + string.Format("{0:#,00}", b) + string.Format("{0:#,00}", c) + string.Format("{0:#,00}", d)
 											+ string.Format("{0:#,00}", f) + string.Format("{0:#,00}", g);
 									//보간식을 쓰는게 더 빠를까?
-									string lotto2 = $"{a,0:#,00}{b,0:#,00}{c,0:#,00}{d,0:#,00}{f,0:#,00}{g,0:#,00}";
-									//Console.WriteLine(lotto);
+									sw.WriteLine(lotto);
+									
 								}
 							}
 						}
 					}
 				}
 			}
+			sw.Close();
 			stopWatch.Stop(); //시간측정 끝
-			System.Console.WriteLine("time : " + stopWatch.ElapsedMilliseconds / 1000d + "초");
+			textBox3.Text = textBox3.Text + "\r\n 종료시간: " + DateTime.Now.ToString("yyyyy-MM-dd HH:mm:ss.fff");
+			textBox3.Text = textBox3.Text + "\r\n time    : " + stopWatch.ElapsedMilliseconds / 1000d + "초";
+			//보간식을 쓰는게 더 빠를까?
+			// 문자열 보간 String Interpolation 
+		}
+		void lottoFileAll2()
+		{
+			textBox3.Text = textBox3.Text + "\r\n 보간법 방식: \r\n 시작시간: " + DateTime.Now.ToString("yyyyy-MM-dd HH:mm:ss.fff");
+
+			//0번째부터
+			int i = 0;
+			// 넣을 초기값
+			int a = 1;
+			int b = 1;
+			int c = 1;
+			int d = 1;
+			int f = 1;
+			int g = 1;
+			// 6자리 배열 생성
+			//int[] array1 = { a, b, c, d, f, g };
+
+			//로또는 1~45 자연수를 가지고 있음
+			//6개를 맞추는거임
+			//45C6 이라는 계산식을 가지고 있음
+			//(45*44*43*42*41*40)/(6*5*4*3*2*1)계산식이 45C6임
+			//for문으로 123456을 가져옴 1 돌리고 2돌리고 3돌려서 마지막 40,41,42,43,44,45만 가지고 오면
+			// 갯수 8145060을 가져옴
+
+			//// 복합 형식 지정 Format 
+			var stopWatch = Stopwatch.StartNew();  //객체 선언
+			StreamWriter sw = new StreamWriter(new FileStream("llotto.txt", FileMode.Create));
+
 			//보간식을 쓰는게 더 빠를까?
 			// 문자열 보간 String Interpolation 
 			stopWatch = Stopwatch.StartNew();
@@ -92,6 +127,7 @@ namespace WindowsFormsApp7
 								for (g = f + 1; g <= 45; ++g)
 								{
 									string lotto2 = $"{a,0:#,00}{b,0:#,00}{c,0:#,00}{d,0:#,00}{f,0:#,00}{g,0:#,00}";
+									sw.WriteLine(lotto2);
 									//Console.WriteLine(lotto2);
 								}
 							}
@@ -99,13 +135,14 @@ namespace WindowsFormsApp7
 					}
 				}
 			}
+			sw.Close();
 			stopWatch.Stop();
-			System.Console.WriteLine("time : " + stopWatch.ElapsedMilliseconds / 1000d + "초");
+			textBox3.Text = textBox3.Text + "\r\n 종료시간: " + DateTime.Now.ToString("yyyyy-MM-dd HH:mm:ss.fff");
+			textBox3.Text = textBox3.Text + "\r\n time    : " + stopWatch.ElapsedMilliseconds / 1000d + "초";
 			//보간식이 빠른가
 			//string.fromat이 빠른가
 			//보간식이 더 빠르다
 		}
-
 
 		///
 		///텍스트파일 바이너리 두번 저장
@@ -133,6 +170,7 @@ namespace WindowsFormsApp7
 			stopwatch.Start(); // 시간측정 시작
 
 			lottoFileAll();
+			lottoFileAll2();
 
 			stopwatch.Stop(); //시간측정 끝
 			System.Console.WriteLine("time : " + stopwatch.ElapsedMilliseconds / 1000d + "초");
@@ -143,10 +181,10 @@ namespace WindowsFormsApp7
 			{
 				Console.WriteLine($"File size : {sr.BaseStream.Length} bytes");
 			}
-			using (BinaryReader br = new BinaryReader(new FileStream("lotto.dat", FileMode.Open)))
-			{
-				Console.WriteLine($"File size : {br.BaseStream.Length} bytes");
-			}
+			//using (BinaryReader br = new BinaryReader(new FileStream("lotto.dat", FileMode.Open)))
+			//{
+			//	Console.WriteLine($"File size : {br.BaseStream.Length} bytes");
+			//}
 		}
 
 		private void lottoBinaryAll()
@@ -239,7 +277,7 @@ namespace WindowsFormsApp7
 				Stopwatch stopwatch = new Stopwatch(); //객체 선언
 				stopwatch.Start(); // 시간측정 시작
 
-				lottoFileAll2();
+				lottoFileAll22();
 
 				stopwatch.Stop(); //시간측정 끝
 				System.Console.WriteLine("time : " + stopwatch.ElapsedMilliseconds + "ms"); //콘솔로그
@@ -253,7 +291,7 @@ namespace WindowsFormsApp7
 			}
 		}
 
-		private void lottoFileAll2()
+		private void lottoFileAll22()
 		{
 			//0번째부터
 			int i = 0;
@@ -394,17 +432,17 @@ namespace WindowsFormsApp7
 			int d;
 			int f;
 			int g;
-			for (a = 1; a <= 40; ++a)
+			for (a = 1; a <= 40; a++)
 			{
-				for (b = a + 1; b <= 41; ++b)
+				for (b = a + 1; b <= 41; b++)
 				{
-					for (c = b + 1; c <= 42; ++c)
+					for (c = b + 1; c <= 42; c++)
 					{
-						for (d = c + 1; d <= 43; ++d)
+						for (d = c + 1; d <= 43; d++)
 						{
-							for (f = d + 1; f <= 44; ++f)
+							for (f = d + 1; f <= 44; f++)
 							{
-								for (g = f + 1; g <= 45; ++g)
+								for (g = f + 1; g <= 45; g++)
 								{
 									string lotto = $"{a,0:#,00}{b,0:#,00}{c,0:#,00}{d,0:#,00}{f,0:#,00}{g,0:#,00}";
 									sw.WriteLine(lotto);
@@ -424,6 +462,75 @@ namespace WindowsFormsApp7
 				Console.WriteLine($"File size : {sr.BaseStream.Length} bytes");
 			}
 			//12초
+		}
+
+		private void button7_Click(object sender, EventArgs e)
+		{
+			//위치찾기
+		 string[] spl = textBox2.Text.Split(',');
+			int[] numAni = new int[6];
+			for (int i = 0; i < spl.Length; i++)
+			{
+				numAni[i] = int.Parse(spl[i]);
+			}
+			int ret1 = 0;
+			int ret2;
+			int ret3;
+			int ret4;
+			int ret5;
+			int ret6;
+			int a = numAni[0];
+			int b = numAni[1];
+			int c = numAni[2];
+			int d = numAni[3];
+			int f = numAni[4];
+			int g = numAni[5];
+
+
+			ret1 = (g - (g-f));
+			//g는 40이다
+			//f는 35이다
+			//g-f는 5이다
+
+			//ret1은 35번째이다.
+			//35번째값은 1 2 3 4 5 40이다.
+
+			ret2 = 40+(f - (f-d));
+			//f는 35이다
+			//d는 27이다
+			//f-d는 8이다
+
+			//ret2는 27번째이다
+
+			ret3 = (d - (d-c));
+			//d는 27이다
+			//c는 25이다
+			//d-c는 2이다
+
+			//ret3는 25번째이다.
+
+			ret4 = (c - (c-b));
+			ret5 = (b - (b-a));
+
+
+			//
+			//ret2 = (f - (f - d));
+			//ret3 = (d - (d - c));
+			//ret4 = (c - (c - b));
+			//ret5 = (b - (b - a));
+
+			int result = ret1 * ret2;
+			//
+
+			//textBox3.Text = textBox3.Text + " " + ret1.ToString()+ " " + ret2.ToString() + " " + ret3.ToString() + " " + ret4.ToString() + " " + ret5.ToString();
+
+		textBox4.Text = result.ToString();
+	//		textBox4.Text = ret.ToString();
+
+
+
+
+
 		}
 	}
 }
