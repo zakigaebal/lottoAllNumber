@@ -486,12 +486,10 @@ namespace WindowsFormsApp7
 			int f = numAni[4];
 			int g = numAni[5];
 
-
 			ret1 = (g - (g-f));
 			//g는 40이다
 			//f는 35이다
 			//g-f는 5이다
-
 			//ret1은 35번째이다.
 			//35번째값은 1 2 3 4 5 40이다.
 
@@ -499,14 +497,12 @@ namespace WindowsFormsApp7
 			//f는 35이다
 			//d는 27이다
 			//f-d는 8이다
-
 			//ret2는 27번째이다
 
 			ret3 = (d - (d-c));
 			//d는 27이다
 			//c는 25이다
 			//d-c는 2이다
-
 			//ret3는 25번째이다.
 
 			ret4 = (c - (c-b));
@@ -529,8 +525,130 @@ namespace WindowsFormsApp7
 
 
 
+		}
+
+		public static long GetActualPosition(StreamReader reader)
+		{
+			System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.DeclaredOnly | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.GetField;
+
+			// The current buffer of decoded characters
+			char[] charBuffer = (char[])reader.GetType().InvokeMember("charBuffer", flags, null, reader, null);
+
+			// The index of the next char to be read from charBuffer
+			int charPos = (int)reader.GetType().InvokeMember("charPos", flags, null, reader, null);
+
+			// The number of decoded chars presently used in charBuffer
+			int charLen = (int)reader.GetType().InvokeMember("charLen", flags, null, reader, null);
+
+			// The current buffer of read bytes (byteBuffer.Length = 1024; this is critical).
+			byte[] byteBuffer = (byte[])reader.GetType().InvokeMember("byteBuffer", flags, null, reader, null);
+
+			// The number of bytes read while advancing reader.BaseStream.Position to (re)fill charBuffer
+			int byteLen = (int)reader.GetType().InvokeMember("byteLen", flags, null, reader, null);
+
+			// The number of bytes the remaining chars use in the original encoding.
+			int numBytesLeft = reader.CurrentEncoding.GetByteCount(charBuffer, charPos, charLen - charPos);
+
+			// For variable-byte encodings, deal with partial chars at the end of the buffer
+			int numFragments = 0;
+			if (byteLen > 0 && !reader.CurrentEncoding.IsSingleByte)
+			{
+				if (reader.CurrentEncoding.CodePage == 65001) // UTF-8
+				{
+					byte byteCountMask = 0;
+					while ((byteBuffer[byteLen - numFragments - 1] >> 6) == 2) // if the byte is "10xx xxxx", it's a continuation-byte
+						byteCountMask |= (byte)(1 << ++numFragments); // count bytes & build the "complete char" mask
+					if ((byteBuffer[byteLen - numFragments - 1] >> 6) == 3) // if the byte is "11xx xxxx", it starts a multi-byte char.
+						byteCountMask |= (byte)(1 << ++numFragments); // count bytes & build the "complete char" mask
+																													// see if we found as many bytes as the leading-byte says to expect
+					if (numFragments > 1 && ((byteBuffer[byteLen - numFragments] >> 7 - numFragments) == byteCountMask))
+						numFragments = 0; // no partial-char in the byte-buffer to account for
+				}
+				else if (reader.CurrentEncoding.CodePage == 1200) // UTF-16LE
+				{
+					if (byteBuffer[byteLen - 1] >= 0xd8) // high-surrogate
+						numFragments = 2; // account for the partial character
+				}
+				else if (reader.CurrentEncoding.CodePage == 1201) // UTF-16BE
+				{
+					if (byteBuffer[byteLen - 2] >= 0xd8) // high-surrogate
+						numFragments = 2; // account for the partial character
+				}
+			}
+			return reader.BaseStream.Position - numBytesLeft - numFragments;
+		}
+
+		//문자열 분리해서 몇번째인지 찾기 ing
+		private bool FindText(string text)
+		{
+			bool b = false;
+			try
+			{
+				string filename = "lotto.txt";
+
+				//using (StreamReader sr = new StreamReader(filename))
+				using (StreamReader sr = new StreamReader(new FileStream("lotto.txt", FileMode.Open)))
+				{
+					// 텍스트파일 전체 읽기
+					string s = sr.ReadToEnd();
+
+					// 문자가 포함되는지 확인
+					if (s.Contains(text) == true)
+					{
+						b = true;
+						MessageBox.Show(s);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+			}
+
+			return b;
+		}
+
+		private void button8_Click(object sender, EventArgs e)
+		{
+			string a = "010203040506";
+			FindText(a);
+			//StreamReader sr = new StreamReader(new FileStream("lotto.txt", FileMode.Open)));
+			//while (sr.Peek() >= 0)
+			//{
+			//	// 1. 첫 라인을 읽어서 문자열로 변환
+			//	String s = sr.ReadLine().ToString();
+
+			//	// " " 기준으로 문자열 분리
+			//	String[] s2 = s.Split("\n", StringSplitOptions.None);
+
+			//	Console.WriteLine(s);
+			//}
+			//sr.Close();
+
+			//using (StreamReader sr = new StreamReader(new FileStream("lotto.txt", FileMode.Open)))
+			//{
+			//string n = "101525273540";
+			//string[] spl = sr.ToString().Split('\n');
+			////for (int i = 0; i < spl.Length; i++)
+			////{
+			////	if (spl[i].Contains(n))
+			////	{
+			////		MessageBox.Show(n);
+			////	}
+			////}
+
+			//	for (int i = 0; i < spl.Length; i++)
+			//	{
+			//		if (spl[i] == n) textBox4.Text = spl[i].ToString();
+			//		//i = int.Parse(spl[i]);
+
+			//	}
+
+
+
+			//}
 
 
 		}
-	}
+		}
 }
